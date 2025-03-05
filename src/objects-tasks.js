@@ -97,8 +97,8 @@ function compareObjects(obj1, obj2) {
  *    isEmptyObject({}) => true
  *    isEmptyObject({a: 1}) => false
  */
-function isEmptyObject(/* obj */) {
-  throw new Error('Not implemented');
+function isEmptyObject(obj) {
+  return !Object.keys(obj).length;
 }
 
 /**
@@ -117,8 +117,8 @@ function isEmptyObject(/* obj */) {
  *    immutableObj.newProp = 'new';
  *    console.log(immutableObj) => {a: 1, b: 2}
  */
-function makeImmutable(/* obj */) {
-  throw new Error('Not implemented');
+function makeImmutable(obj) {
+  return Object.freeze(obj);
 }
 
 /**
@@ -131,8 +131,19 @@ function makeImmutable(/* obj */) {
  *    makeWord({ a: [0, 1], b: [2, 3], c: [4, 5] }) => 'aabbcc'
  *    makeWord({ H:[0], e: [1], l: [2, 3, 8], o: [4, 6], W:[5], r:[7], d:[9]}) => 'HelloWorld'
  */
-function makeWord(/* lettersObject */) {
-  throw new Error('Not implemented');
+function makeWord(lettersObject) {
+  const arr = [];
+  Object.entries(lettersObject).forEach(([key, value]) => {
+    for (let i = 0; i < value.length; i += 1) {
+      if (arr.length < value[i]) {
+        for (let j = 0; j <= value.length; j += 1) {
+          arr.splice(value[i], 0, '');
+        }
+      }
+      arr.splice(value[i], 1, key);
+    }
+  });
+  return arr.join('');
 }
 
 /**
@@ -149,8 +160,36 @@ function makeWord(/* lettersObject */) {
  *    sellTickets([25, 25, 50]) => true
  *    sellTickets([25, 100]) => false (The seller does not have enough money to give change.)
  */
-function sellTickets(/* queue */) {
-  throw new Error('Not implemented');
+function sellTickets(queue) {
+  const cashier = { 25: 0, 50: 0, 100: 0 };
+  while (queue.length) {
+    const entry = queue.shift();
+    switch (entry) {
+      case 25:
+        break;
+      case 50:
+        if (!cashier[25]) {
+          return false;
+        }
+        cashier[25] -= 1;
+        break;
+      case 100:
+        if (!(cashier[25] && cashier[50]) && !(cashier[25] >= 3)) {
+          return false;
+        }
+        if (cashier[50]) {
+          cashier[50] -= 1;
+          cashier[25] -= 1;
+        } else {
+          cashier[25] -= 3;
+        }
+        break;
+      default:
+        break;
+    }
+    cashier[entry] += 1;
+  }
+  return true;
 }
 
 /**
